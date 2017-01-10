@@ -16,7 +16,7 @@ aronix - 한승범  
 
 
 -----------------------------------------------------------------------------------------------------
-![image2](https://raw.githubusercontent.com/Boostcamp-endroid/udacity/master/readme_images/0002.PNG)
+![image2](https://raw.githubusercontent.com/Boostcamp-endroid/udacity/master/readme_images/0002.PNG)  
 2. 이거는 다른 분들은 뜰 지 안 뜰지 잘 모르겠는데 자기 닉네임 있는 거 클릭합니다.
 
 
@@ -40,14 +40,14 @@ commit push pull 같은 건 아신다고 생각하겠습니다.
 
 
 -----------------------------------------------------------------------------------------------------
-![image5](https://raw.githubusercontent.com/Boostcamp-endroid/udacity/master/readme_images/0005.PNG)
+![image5](https://raw.githubusercontent.com/Boostcamp-endroid/udacity/master/readme_images/0005.PNG)  
 5. 여기서 이게 제일 중요한데 저기 Boostcamp-endroid의 master branch를 자기 닉네임 branch로 바꿔줍니다.
 
 
 
 
 -----------------------------------------------------------------------------------------------------
-![image6](https://raw.githubusercontent.com/Boostcamp-endroid/udacity/master/readme_images/0006.PNG)
+![image6](https://raw.githubusercontent.com/Boostcamp-endroid/udacity/master/readme_images/0006.PNG)  
 6. 그리고 Create pull request 버튼을 누릅니다
 
 
@@ -63,4 +63,3 @@ commit push pull 같은 건 아신다고 생각하겠습니다.
 
 -----------------------------------------------------------------------------------------------------
 이러면 끝났습니다.
-제가 pull request 받고 연락 드릴게요~
