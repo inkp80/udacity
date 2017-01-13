@@ -345,6 +345,10 @@ public class MainActivity extends AppCompatActivity implements
             openLocationInMap();
             return true;
         }
+        if(id==R.id.action_settings){
+            Intent startSettingsActivity = new Intent(this, SettingsActivity.class);
+            startActivity(startSettingsActivity);
+        }
 
         // TODO (1) Add new Activity called SettingsActivity using Android Studio wizard
         // Do step 2 in SettingsActivity
