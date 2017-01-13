@@ -302,14 +302,37 @@ public class WeatherProvider extends ContentProvider {
      * @param selectionArgs Used in conjunction with the selection statement
      * @return The number of rows deleted
      */
-    @Override
-    public int delete(@NonNull Uri uri, String selection, String[] selectionArgs) {
-        throw new RuntimeException("Student, you need to implement the delete method!");
 
-//          TODO (2) Only implement the functionality, given the proper URI, to delete ALL rows in the weather table
+//      TODO (2) Only implement the functionality, given the proper URI, to delete ALL rows in the weather table
 
 //      TODO (3) Return the number of rows deleted
-    }
+
+        @Override
+        public int delete(@NonNull Uri uri, String selection, String[] selectionArgs) {
+
+            int numRowsDeleted;
+
+            if (null == selection) selection = "1";
+
+            switch (sUriMatcher.match(uri)) {
+
+                case CODE_WEATHER:
+                    numRowsDeleted = mOpenHelper.getWritableDatabase().delete(
+                            WeatherContract.WeatherEntry.TABLE_NAME,
+                            selection,
+                            selectionArgs);
+
+                    break;
+
+                default:
+                    throw new UnsupportedOperationException("Unknown uri: " + uri);
+            }
+
+            if (numRowsDeleted != 0) {
+                getContext().getContentResolver().notifyChange(uri, null);
+            }
+            return numRowsDeleted;
+        }
 
     /**
      * In Sunshine, we aren't going to do anything with this method. However, we are required to
