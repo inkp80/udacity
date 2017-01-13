@@ -17,12 +17,16 @@
 package com.example.android.todolist.data;
 
 import android.content.ContentProvider;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+
+import static com.example.android.todolist.data.TaskContract.TaskEntry.TABLE_NAME;
 
 // Verify that TaskContentProvider extends from ContentProvider and implements required methods
 public class TaskContentProvider extends ContentProvider {
@@ -79,15 +83,34 @@ public class TaskContentProvider extends ContentProvider {
     @Override
     public Uri insert(@NonNull Uri uri, ContentValues values) {
         // TODO (1) Get access to the task database (to write new data to)
+        final SQLiteDatabase db = mTaskDbHelper.getWritableDatabase();
 
         // TODO (2) Write URI matching code to identify the match for the tasks directory
-
+        int match = sUriMatcher.match(uri);
         // TODO (3) Insert new values into the database
+        Uri returnUri;
+        switch (match){
+            case TASKS:
+                long id = db.insert(TABLE_NAME, null, values);
+                if(id>0){ //insert is vaild
+                    returnUri = ContentUris.withAppendedId(TaskContract.TaskEntry.CONTENT_URI, id);
+                    //기존의 base URI에 id를 더해서..
+                } else {
+                    throw new android.database.SQLException("Failed to insert" + uri);
+                }
+                break;
+//            case TASK_WITH_ID:
+//                break;
+            default:
+                throw new UnsupportedOperationException("Unknown uri, " + uri); //URI string으로 예상된다..?? Toast는 toString 해줘야함 이유 찾을 것
+        }
         // TODO (4) Set the value for the returnedUri and write the default case for unknown URI's
 
         // TODO (5) Notify the resolver if the uri has been changed, and return the newly inserted URI
-
-        throw new UnsupportedOperationException("Not yet implemented");
+        getContext().getContentResolver().notifyChange(uri, null);
+        //해당 함수는 ContentResolver들에게 DB의 내용이 변경되었다는 것을 알리는 역할을 한다.
+        //변경된 부분의 Uri, 즉 경로를 말한다.
+        return returnUri;
     }
 
 

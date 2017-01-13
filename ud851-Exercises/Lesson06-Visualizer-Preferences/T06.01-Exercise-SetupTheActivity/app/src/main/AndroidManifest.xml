@@ -19,9 +19,20 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+
+        <activity
+            android:name=".SettingsActivity"
+            android:label="Settings"
+            android:parentActivityName=".VisualizerActivity">
+
+        <meta-data
+            android:name="android.support.PARNET_ACTIVITY"
+            android:value=".VisualizerActivity"/>
+        </activity>
     </application>
 
-    <!-- TODO (7) Modify here and inside of SettingsActivity so that VisualizerActivity is treated
+    <!-- TODO (7) Modify here and inside of SettingsActivity so that VisualizerActivity is treated(DONE)
     as the parent of SettingsActivity and the up button is displayed :
     https://developer.android.com/training/implementing-navigation/ancestral.html
     Make sure to use the attribute android:launchMode singleTop-->

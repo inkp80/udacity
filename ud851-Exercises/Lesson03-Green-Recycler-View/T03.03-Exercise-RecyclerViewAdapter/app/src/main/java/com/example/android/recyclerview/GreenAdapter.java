@@ -15,7 +15,10 @@
  */
 package com.example.android.recyclerview;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -33,13 +36,45 @@ import android.widget.TextView;
  * contents are green.
  */
 // TODO (4) From GreenAdapter, extend RecyclerView.Adapter<NumberViewHolder>
-public class GreenAdapter {
+public class GreenAdapter extends RecyclerView.Adapter<GreenAdapter.NumberViewHolder> {
+
+    private static final String TAG = GreenAdapter.class.getSimpleName();
+    private int mNumberItems;
 
     // TODO (1) Add a private int variable called mNumberItems
 
     // TODO (2) Create a constructor for GreenAdapter that accepts an int as a parameter for numberOfItems
     // TODO (3) Store the numberOfItems parameter in mNumberItems
 
+    public GreenAdapter(int numberOfItems) {
+        mNumberItems = numberOfItems;
+    }
+
+    @Override
+    public NumberViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+        Context context = viewGroup.getContext();
+
+        int layoutIdForListItem = R.layout.number_list_item;
+
+        LayoutInflater inflater = LayoutInflater.from(context);
+        boolean shouldAttachToParentImmediately = false;
+
+        View view = inflater.inflate(layoutIdForListItem, viewGroup, shouldAttachToParentImmediately);
+        NumberViewHolder viewHolder = new NumberViewHolder(view);
+
+        return viewHolder;
+    }
+
+    @Override
+    public void onBindViewHolder(GreenAdapter.NumberViewHolder holder, int position) {
+        Log.d(TAG, "#" + position);
+        holder.bind(position);
+    }
+
+    @Override
+    public int getItemCount() {
+        return mNumberItems;
+    }
     // TODO (5) Override the onCreateViewHolder method
     // TODO (6) Create and return a new NumberViewHolder within this method
 
@@ -60,6 +95,7 @@ public class GreenAdapter {
          * Constructor for our ViewHolder. Within this constructor, we get a reference to our
          * TextViews and set an onClickListener to listen for clicks. Those will be handled in the
          * onClick method below.
+         *
          * @param itemView The View that you inflated in
          *                 {@link GreenAdapter#onCreateViewHolder(ViewGroup, int)}
          */
@@ -72,6 +108,7 @@ public class GreenAdapter {
         /**
          * A method we wrote for convenience. This method will take an integer as input and
          * use that integer to display the appropriate text within a list item.
+         *
          * @param listIndex Position of the item in the list
          */
         void bind(int listIndex) {

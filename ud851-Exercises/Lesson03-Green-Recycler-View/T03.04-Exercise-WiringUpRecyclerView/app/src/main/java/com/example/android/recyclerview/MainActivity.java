@@ -17,19 +17,31 @@ package com.example.android.recyclerview;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final int NUM_LIST_ITEMS=100;
     // TODO (1) Create a private static final int called NUM_LIST_ITEMS and set it equal to 100
 
     // TODO (2) Create a GreenAdapter variable called mAdapter
     // TODO (3) Create a RecyclerView variable called mNumbersList
 
+    private GreenAdapter mAdapter;
+    private RecyclerView mNumbersList;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mNumbersList=(RecyclerView) findViewById(R.id.rv_numbers);
 
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        mNumbersList.setLayoutManager(layoutManager);
+        mNumbersList.setHasFixedSize(true);
+        mAdapter = new GreenAdapter(NUM_LIST_ITEMS);
+        mNumbersList.setAdapter(mAdapter);
         // TODO (4) Use findViewById to store a reference to the RecyclerView in mNumbersList
 
         // TODO (5) Create a LinearLayoutManager variable called layoutManager

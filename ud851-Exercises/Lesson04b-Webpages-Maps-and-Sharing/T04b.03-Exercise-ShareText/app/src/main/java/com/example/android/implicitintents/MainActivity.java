@@ -64,9 +64,12 @@ public class MainActivity extends AppCompatActivity {
      */
     public void onClickShareTextButton(View v) {
         // TODO (5) Specify a String you'd like to share
+        String textThatYouWantToShare ="!!Sharing the coolest thing I've learned so far. You should " +
+                "check out Udacity and Google's Android Nanodegree!";
 
         // TODO (6) Replace the Toast with shareText, passing in the String from step 5
-        Toast.makeText(this, "TODO: Share text when this is clicked", Toast.LENGTH_LONG).show();
+        shareText(textThatYouWantToShare);
+        //Toast.makeText(this, "TODO: Share text when this is clicked", Toast.LENGTH_LONG).show();
     }
 
     /**
@@ -140,6 +143,16 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void shareText(String textToShare){
+        String mimeType = "text/plain";
+        String title = "Learning How to share";
+        ShareCompat.IntentBuilder
+                .from(this)
+                .setType(mimeType)
+                .setChooserTitle(title)
+                .setText(textToShare)
+                .startChooser();
+    }
     // TODO (1) Create a void method called shareText that accepts a String as a parameter
     // Do steps 2 - 4 within the shareText method
 

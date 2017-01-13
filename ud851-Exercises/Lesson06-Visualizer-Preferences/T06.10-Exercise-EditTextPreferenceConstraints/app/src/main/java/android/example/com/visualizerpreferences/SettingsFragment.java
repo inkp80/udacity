@@ -27,9 +27,19 @@ import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.preference.PreferenceScreen;
 import android.widget.Toast;
 
-// TODO (1) Implement OnPreferenceChangeListener
+
+//차이점에 대해서 참고할 것.
+//To limit the acceptable values between 0 (non inclusive) and 3 (inclusive) we opted to use a PreferenceChangeListener
+// -this is not the same as a SharedPreferenceChangeListener.
+//The differences are:
+//SharedPreferenceChangeListener is triggered after any value is saved to the SharedPreferences file.
+//PreferenceChangeListener is triggered before a value is saved to the SharedPreferences file.
+//Because of this, it can prevent an invalid update to a preference. PreferenceChangeListeners are also attached to a single preference.
+
+
+// TODO (1) Implement OnPreferenceChangeListener (DONE)
 public class SettingsFragment extends PreferenceFragmentCompat implements
-        OnSharedPreferenceChangeListener {
+        OnSharedPreferenceChangeListener, Preference.OnPreferenceChangeListener {
 
     @Override
     public void onCreatePreferences(Bundle bundle, String s) {
@@ -51,7 +61,9 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
                 setPreferenceSummary(p, value);
             }
         }
-        // TODO (3) Add the OnPreferenceChangeListener specifically to the EditTextPreference
+        // TODO (3) Add the OnPreferenceChangeListener specifically to the EditTextPreference (DONE)
+        Preference pref = findPreference(getString(R.string.pref_size_key));
+        pref.setOnPreferenceChangeListener(this);
     }
 
     @Override
@@ -67,12 +79,19 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
         }
     }
 
+
     /**
      * Updates the summary for the preference
      *
      * @param preference The preference to be updated
      * @param value      The value that the preference was updated to
      */
+
+    // TODO (2) Override onPreferenceChange. This method should try to convert the new preference value (DONE)
+    // to a float; if it cannot, show a helpful error message and return false. If it can be converted
+    // to a float check that that float is between 0 (exclusive) and 3 (inclusive). If it isn't, show
+    // an error message and return false. If it is a valid number, return true.
+
     private void setPreferenceSummary(Preference preference, String value) {
         if (preference instanceof ListPreference) {
             // For list preferences, figure out the label of the selected value
@@ -88,11 +107,6 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
         }
     }
 
-    // TODO (2) Override onPreferenceChange. This method should try to convert the new preference value
-    // to a float; if it cannot, show a helpful error message and return false. If it can be converted
-    // to a float check that that float is between 0 (exclusive) and 3 (inclusive). If it isn't, show
-    // an error message and return false. If it is a valid number, return true.
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,5 +119,27 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
         super.onDestroy();
         getPreferenceScreen().getSharedPreferences()
                 .unregisterOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
+    public boolean onPreferenceChange(Preference preference, Object newValue) {
+        Toast error_message =
+                Toast.makeText(getContext(), "Please Select 0 < val <= 3", Toast.LENGTH_LONG);
+
+        String size_key = getString(R.string.pref_size_key);
+        if (preference.getKey().equals(size_key)) {
+            String Scale_str = (String) newValue;
+            try {
+                float scale = Float.parseFloat(Scale_str);
+                if (scale <= 0 || scale > 3) {
+                    error_message.show();
+                    return false;
+                }
+            } catch (NumberFormatException nfe) {
+                error_message.show();
+                return false;
+            }
+        }
+        return true;
     }
 }
