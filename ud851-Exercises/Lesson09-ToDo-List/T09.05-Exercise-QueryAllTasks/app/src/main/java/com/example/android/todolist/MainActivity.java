@@ -27,7 +27,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
+
+import com.example.android.todolist.data.TaskContentProvider;
+import com.example.android.todolist.data.TaskContract;
 
 
 public class MainActivity extends AppCompatActivity implements
@@ -148,8 +153,13 @@ public class MainActivity extends AppCompatActivity implements
 
                 // TODO (5) Query and load all task data in the background; sort by priority
                 // [Hint] use a try/catch block to catch any errors in loading data
-
-                return null;
+                try{
+                    return getContentResolver().query(TaskContract.TaskEntry.CONTENT_URI, null, null, null, TaskContract.TaskEntry.COLUMN_PRIORITY);
+                } catch (Exception e){
+                    Log.d("error****", "fail to load in background");
+                    Toast.makeText(getBaseContext(), "fail to Background loading", Toast.LENGTH_LONG).show();
+                    return null;
+                }
             }
 
             // deliverResult sends the result of the load, a Cursor, to the registered listener

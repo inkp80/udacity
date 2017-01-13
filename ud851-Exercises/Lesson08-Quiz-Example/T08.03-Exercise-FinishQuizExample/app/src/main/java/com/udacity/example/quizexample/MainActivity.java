@@ -17,21 +17,26 @@
 package com.udacity.example.quizexample;
 
 import android.content.ContentResolver;
+import android.content.Context;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.udacity.example.droidtermsprovider.DroidTermsExampleContract;
 
 /**
  * Gets the data from the ContentProvider and shows a series of flash cards.
  */
-
+//개선사항 - Loader, 참조되는 데이터의 변화가 일어날 경우 즉각 반영, 처음으로 돌아가면 Toast 출력
 public class MainActivity extends AppCompatActivity {
 
+    Context Main = this;
     // The data from the DroidTermsExample content provider
     private Cursor mData;
 
@@ -48,6 +53,9 @@ public class MainActivity extends AppCompatActivity {
     // advance the app to the next word
     private final int STATE_SHOWN = 1;
 
+    private TextView mDefView;
+    private  TextView mWordView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,12 +63,18 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Get the views
-        // TODO (1) You'll probably want more than just the Button
+        mWordView = (TextView) findViewById(R.id.text_view_word);
+        mDefView = (TextView) findViewById(R.id.text_view_definition);
         mButton = (Button) findViewById(R.id.button_next);
 
         //Run the database operation to get the cursor off of the main thread
         new WordFetchTask().execute();
 
+    }
+    @Override
+    protected void onDestroy(){
+        super.onDestroy();
+        mData.close();
     }
 
     /**
@@ -83,11 +97,26 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void nextWord() {
-
+        if(mData == null){
+            //DO NOTHING just return
+            return;
+        }
+        //데이터가 없으면 여기까지는 온다.
         // Change button text
         mButton.setText(getString(R.string.show_definition));
 
-        // TODO (3) Go to the next word in the Cursor, show the next word and hide the definition
+        //데이터 없으면 여기서 문제 생김
+        Log.d("Debug*****","Breaking Point");
+        mWordView.setText(mData.getString(mData.getColumnIndex(DroidTermsExampleContract.COLUMN_WORD)));
+        mDefView.setVisibility(View.INVISIBLE);
+        mDefView.setText(mData.getString(mData.getColumnIndex(DroidTermsExampleContract.COLUMN_DEFINITION)));
+
+        if(!mData.moveToNext()){
+            mData.moveToFirst();
+            Toast.makeText(Main, "End of Test, Move to first", Toast.LENGTH_SHORT); //여긴 또 왜 안되니..
+        }//why Toast doesn't work?
+
+
         // Note that you shouldn't try to do this if the cursor hasn't been set yet.
         // If you reach the end of the list of words, you should start at the beginning again.
         mCurrentState = STATE_HIDDEN;
@@ -98,16 +127,9 @@ public class MainActivity extends AppCompatActivity {
 
         // Change button text
         mButton.setText(getString(R.string.next_word));
-
-        // TODO (4) Show the definition
+        mDefView.setVisibility(View.VISIBLE);
         mCurrentState = STATE_SHOWN;
 
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        // TODO (5) Remember to close your cursor!
     }
 
     // Use an async task to do the data fetch off of the main thread.
@@ -121,9 +143,15 @@ public class MainActivity extends AppCompatActivity {
             // Get the content resolver
             ContentResolver resolver = getContentResolver();
 
+            String[] projection = new String[] {DroidTermsExampleContract.COLUMN_WORD, DroidTermsExampleContract.COLUMN_DEFINITION};
             // Call the query method on the resolver with the correct Uri from the contract class
             Cursor cursor = resolver.query(DroidTermsExampleContract.CONTENT_URI,
-                    null, null, null, null);
+                    projection, null, null, null);
+            //커서가 긁어온 결과에 아무 것도 없으면 처리를 어떻게 해야하나
+            if(cursor.getCount() == 0 ){
+                Log.d("debug****", "No values");
+                return null;
+            }
             return cursor;
         }
 
@@ -132,12 +160,18 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Cursor cursor) {
             super.onPostExecute(cursor);
+            if(cursor == null){
+                Log.d("debug*****", "no data onpostEXEC");
+                Toast.makeText(Main, "NO DATA", Toast.LENGTH_LONG).show();
+                return;
+            }
 
+            Toast.makeText(Main, "LOADED", Toast.LENGTH_LONG).show();
             // Set the data for MainActivity
             mData = cursor;
+            mData.moveToFirst();
 
-            // TODO (2) Initialize anything that you need the cursor for, such as setting up
-            // the screen with the first word and setting any other instance variables
+            nextWord();
         }
     }
 

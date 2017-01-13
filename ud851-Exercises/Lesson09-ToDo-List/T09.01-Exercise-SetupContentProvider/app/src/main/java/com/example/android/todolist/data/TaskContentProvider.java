@@ -18,6 +18,7 @@ package com.example.android.todolist.data;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -31,12 +32,16 @@ public class TaskContentProvider extends ContentProvider {
     In this case, you’re working with a SQLite database, so you’ll need to
     initialize a DbHelper to gain access to it.
      */
+    private TaskDbHelper mTaskDbHelper;
     @Override
     public boolean onCreate() {
+        //DB를 onCreate에서 dbhelper를 통해 연다
         // TODO (2) Complete onCreate() and initialize a TaskDbhelper on startup
         // [Hint] Declare the DbHelper as a global variable
+        Context context = getContext(); //this로 할당하는건 안되나?
+        mTaskDbHelper = new TaskDbHelper(context);
 
-        return false;
+        return true;
     }
 
 
